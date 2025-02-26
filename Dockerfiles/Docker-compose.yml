@@ -1,0 +1,44 @@
+version: '3.8'
+
+networks:
+
+  app-network:
+
+volumes:
+
+    app-volume:
+
+services:
+
+  public:
+    build: ./public
+    image: patrick/frontend
+    container_name: public
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+
+  server:
+    build: ./server
+    image: patrick/backend
+    container_name: server
+    networks:
+      - app-network
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+    
+
+  database:
+    image: mongo
+    container_name: mongo
+    networks:
+      - app-network
+    ports:
+      - "27017:27017"
+    volumes:
+      - app-volume:/data/db
